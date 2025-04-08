@@ -1,0 +1,215 @@
+/* Custom CSS for CO2 Emissions Predictor App */
+
+/* Main container */
+.main {
+    background-color: #F8FAFC;
+    padding: 1.5rem;
+}
+
+/* Headers */
+h1 {
+    color: #16A34A;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    color: #0F766E;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+h3 {
+    color: #115E59;
+    font-weight: 600;
+    margin-top: 1.2rem;
+    margin-bottom: 0.8rem;
+}
+
+/* Sidebar styling */
+.sidebar .sidebar-content {
+    background-color: #ECFDF5;
+}
+
+/* Card containers */
+.stCard {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    background-color: white;
+}
+
+/* Dashboard elements */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-item {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.dashboard-item-title {
+    font-size: 1rem;
+    color: #64748B;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-item-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #16A34A;
+}
+
+/* Buttons */
+.stButton > button {
+    background-color: #16A34A;
+    color: white;
+    border-radius: 6px;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.stButton > button:hover {
+    background-color: #15803D;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Plots and charts */
+.stPlotlyChart {
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    background-color: white;
+    padding: 1rem;
+}
+
+/* Text elements */
+p, li, .stMarkdown {
+    color: #334155;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Threat levels styling */
+.low-threat {
+    color: #16A34A;
+    font-weight: 600;
+}
+
+.medium-threat {
+    color: #F59E0B;
+    font-weight: 600;
+}
+
+.high-threat {
+    color: #F97316;
+    font-weight: 600;
+}
+
+.critical-threat {
+    color: #EF4444;
+    font-weight: 600;
+}
+
+/* Recommendation cards */
+.recommendation-card {
+    background-color: #F0FDF4;
+    padding: 1rem;
+    border-left: 4px solid #16A34A;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+/* Footer */
+.footer {
+    margin-top: 3rem;
+    text-align: center;
+    padding: 1.5rem 0;
+    border-top: 1px solid #E2E8F0;
+    color: #64748B;
+    font-size: 0.875rem;
+}
+
+/* Interactive elements */
+.stSelectbox, .stMultiSelect, .stSlider {
+    margin-bottom: 1.2rem;
+}
+
+/* Progress bar */
+.stProgress > div > div {
+    background-color: #16A34A;
+}
+
+/* Data tables */
+.dataframe {
+    font-size: 0.9rem;
+    border-collapse: collapse;
+    border: none;
+    width: 100%;
+}
+
+.dataframe th {
+    background-color: #F0FDF4;
+    color: #334155;
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.dataframe td {
+    padding: 0.5rem;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+/* Feature comparison cards */
+.feature-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.feature-card-title {
+    font-weight: 600;
+    color: #0F766E;
+    margin-bottom: 0.5rem;
+}
+
+.feature-card-icon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+}
+
+/* Info banners */
+.info-banner {
+    background-color: #EFF6FF;
+    border-left: 4px solid #3B82F6;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+}
+
+.warning-banner {
+    background-color: #FEF3C7;
+    border-left: 4px solid #F59E0B;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+}

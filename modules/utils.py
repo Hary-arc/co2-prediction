@@ -17,15 +17,12 @@ def calculate_metrics(y_true, y_pred):
     dict
         Dictionary containing evaluation metrics
     """
-    rmse = np.sqrt(mean_squared_error(y_true, y_pred))
-    r2 = r2_score(y_true, y_pred)
-    mae = mean_absolute_error(y_true, y_pred)
-    
-    return {
-        'RMSE': rmse,
-        'R2': r2,
-        'MAE': mae
+    metrics = {
+        'rmse': np.sqrt(mean_squared_error(y_true, y_pred)),
+        'r2': r2_score(y_true, y_pred),
+        'mae': mean_absolute_error(y_true, y_pred)
     }
+    return metrics
 
 def calculate_threat_level(co2_value, base_threshold=1000, max_threshold=15000):
     """
@@ -45,21 +42,15 @@ def calculate_threat_level(co2_value, base_threshold=1000, max_threshold=15000):
     float
         Threat level on a scale of 1-10
     """
-    # Ensure co2_value is not negative
-    co2_value = max(0, co2_value)
-    
-    # Calculate raw threat level using a logarithmic scale
-    # This ensures that small changes at low emissions are more significant than at high emissions
+    # Normalize the CO2 value to a 1-10 scale
     if co2_value <= base_threshold:
-        # Below base threshold, threat level is proportional to emission value
-        threat_level = co2_value / base_threshold * 3  # Max 3 for values below base_threshold
+        threat_level = 1.0
+    elif co2_value >= max_threshold:
+        threat_level = 10.0
     else:
-        # Above base threshold, use logarithmic scaling
-        log_factor = np.log10(co2_value / base_threshold) / np.log10(max_threshold / base_threshold)
-        threat_level = 3 + (7 * min(1, log_factor))  # 3-10 range for values above base_threshold
-    
-    # Ensure threat level is between 1 and 10
-    threat_level = max(1, min(10, threat_level))
+        # Linear mapping from base_threshold-max_threshold to 1-10
+        normalized_value = (co2_value - base_threshold) / (max_threshold - base_threshold)
+        threat_level = 1.0 + normalized_value * 9.0
     
     return threat_level
 
@@ -79,38 +70,38 @@ def get_emission_threshold(region_type='global', year=None):
     dict
         Dictionary containing thresholds for different threat levels
     """
-    # Base thresholds for global average
-    base_thresholds = {
-        'low': 2000,        # Below 2000 kg/person is considered low
-        'moderate': 5000,   # 2000-5000 kg/person is moderate
-        'high': 10000,      # 5000-10000 kg/person is high
-        'severe': 15000     # Above 10000 kg/person is severe
-    }
-    
-    # Adjust thresholds based on region type
+    # Base thresholds for different region types
     if region_type == 'developed':
-        # Developed countries have historically higher emissions
-        factor = 1.2
+        thresholds = {
+            'low': 1000,
+            'moderate': 5000,
+            'high': 10000,
+            'severe': 15000
+        }
     elif region_type == 'developing':
-        # Developing countries have historically lower emissions
-        factor = 0.8
-    else:  # 'global'
-        factor = 1.0
+        thresholds = {
+            'low': 500,
+            'moderate': 2500,
+            'high': 7500,
+            'severe': 12500
+        }
+    else:  # global
+        thresholds = {
+            'low': 750,
+            'moderate': 3000,
+            'high': 8000,
+            'severe': 13000
+        }
     
-    # Adjust thresholds based on year (stricter thresholds for future years)
-    if year and year > 2020:
-        # Gradually reduce thresholds for future years
-        year_factor = 1.0 - min(0.3, (year - 2020) * 0.02)  # Max 30% reduction
-    else:
-        year_factor = 1.0
+    # Adjust thresholds based on year if provided
+    if year is not None:
+        # Example: Assume thresholds decrease by 2% per year after 2020
+        if year > 2020:
+            adjustment_factor = 1.0 - 0.02 * (year - 2020)
+            for level in thresholds:
+                thresholds[level] *= adjustment_factor
     
-    # Apply adjustments
-    adjusted_thresholds = {
-        level: threshold * factor * year_factor
-        for level, threshold in base_thresholds.items()
-    }
-    
-    return adjusted_thresholds
+    return thresholds
 
 def get_recommendations(threat_level, emission_type='CO2'):
     """
@@ -128,56 +119,71 @@ def get_recommendations(threat_level, emission_type='CO2'):
     list
         List of recommendation strings
     """
-    # Base recommendations for CO2 emissions
+    recommendations = []
+    
     if emission_type == 'CO2':
-        if threat_level < 3:  # Low
+        if threat_level < 3:
             recommendations = [
-                "Maintain current sustainable practices",
-                "Continue monitoring emissions",
-                "Set targets for further reductions",
-                "Explore renewable energy options for future implementation"
+                "Maintain current green practices and continue renewable energy integration",
+                "Set more ambitious emission reduction targets for future planning",
+                "Increase community awareness about sustainable energy practices",
+                "Implement robust monitoring systems to track emissions over time"
             ]
-        elif threat_level < 6:  # Moderate
+        elif threat_level < 6:
             recommendations = [
-                "Increase renewable energy adoption",
-                "Implement energy efficiency measures",
-                "Develop emissions reduction policies",
-                "Conduct regular energy audits",
-                "Invest in green technology research"
+                "Increase renewable energy sources to at least 50% of total power consumption",
+                "Upgrade to energy-efficient infrastructure for mobile base stations",
+                "Develop and strictly enforce emissions reduction policies",
+                "Invest in green technology research and implementation",
+                "Consider carbon offsetting programs for unavoidable emissions"
             ]
-        elif threat_level < 8:  # High
+        elif threat_level < 8:
             recommendations = [
-                "Accelerate transition to renewable energy",
-                "Implement strict emissions regulations",
-                "Consider carbon pricing mechanisms",
-                "Modernize high-emission infrastructure",
-                "Set aggressive emissions reduction targets",
-                "Engage in international climate initiatives"
-            ]
-        else:  # Severe
-            recommendations = [
-                "Declare climate emergency",
-                "Radically transform energy systems",
-                "Prioritize emissions reduction in all policies",
-                "Seek international support and cooperation",
-                "Implement comprehensive emissions monitoring",
-                "Engage the public in emissions reduction efforts",
-                "Invest heavily in carbon capture technologies"
-            ]
-    else:
-        # Generic recommendations for other emission types
-        if threat_level < 5:
-            recommendations = [
-                "Monitor emissions regularly",
-                "Implement standard mitigation measures",
-                "Research sector-specific reduction strategies"
+                "Accelerate urgent transition to renewable energy sources for all base stations",
+                "Implement strict emissions regulations with penalties for non-compliance",
+                "Consider carbon taxes or emissions trading systems to incentivize reductions",
+                "Prioritize modernization of high-emission infrastructure",
+                "Engage in international emissions reduction initiatives for industry standards",
+                "Deploy energy storage solutions to increase renewable energy utilization"
             ]
         else:
             recommendations = [
-                "Implement aggressive emission control measures",
-                "Adopt best available technologies",
-                "Develop strict regulatory framework",
-                "Collaborate with experts for tailored solutions"
+                "Declare climate emergency and mobilize all available resources for mitigation",
+                "Implement radical transformation of energy systems for telecom infrastructure",
+                "Make emissions reduction the highest policy priority with executive oversight",
+                "Seek international support and cooperation for advanced green technologies",
+                "Address all emission sources simultaneously with comprehensive action plan",
+                "Engage the public in emissions reduction efforts through awareness campaigns",
+                "Implement continuous monitoring and adaptive management strategies",
+                "Consider temporary restrictions on non-essential high-emission activities"
+            ]
+    elif emission_type == 'CH4':
+        # Methane-specific recommendations
+        if threat_level < 5:
+            recommendations = [
+                "Monitor methane leaks in natural gas infrastructure",
+                "Implement regular inspection and maintenance schedules",
+                "Upgrade to low-leak equipment and components"
+            ]
+        else:
+            recommendations = [
+                "Implement comprehensive methane leak detection and repair programs",
+                "Replace high-leak equipment with zero-emission alternatives",
+                "Consider methane capture and utilization technologies"
+            ]
+    else:
+        # Generic recommendations
+        if threat_level < 5:
+            recommendations = [
+                "Monitor emission levels regularly",
+                "Implement basic emission control measures",
+                "Develop environmental management plans"
+            ]
+        else:
+            recommendations = [
+                "Implement strict emission control technologies",
+                "Consider facility upgrades or replacements",
+                "Develop comprehensive environmental management systems"
             ]
     
     return recommendations
@@ -198,20 +204,18 @@ def convert_to_gwp(emissions, gas_type):
     float or array-like
         CO2 equivalent emissions
     """
-    # GWP values for 100-year time horizon (IPCC Fifth Assessment Report)
-    gwp_factors = {
+    # GWP values (100-year time horizon, based on IPCC AR5)
+    gwp = {
         'CO2': 1,
-        'CH4': 25,   # Methane is 25 times more potent than CO2
-        'CO': 3,     # Approximate factor for carbon monoxide
-        'N2O': 298,  # Nitrous oxide
-        'HFC': 12400,  # Hydrofluorocarbons (average of common HFCs)
-        'SF6': 22800  # Sulfur hexafluoride
+        'CH4': 28,  # Methane
+        'N2O': 265,  # Nitrous oxide
+        'CO': 3,  # Carbon monoxide (approximate)
+        'HFC-134a': 1300,  # Hydrofluorocarbon-134a
+        'SF6': 23500  # Sulfur hexafluoride
     }
     
-    # Get GWP factor for the gas type (default to 1 if not found)
-    factor = gwp_factors.get(gas_type, 1)
-    
-    # Calculate CO2 equivalent
-    co2_equivalent = emissions * factor
-    
-    return co2_equivalent
+    if gas_type in gwp:
+        return emissions * gwp[gas_type]
+    else:
+        # If gas type not found, return original emissions
+        return emissions

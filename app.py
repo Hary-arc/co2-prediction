@@ -25,6 +25,15 @@ st.set_page_config(
     layout="wide"
 )
 
+# Load custom styles
+from styles import load_css, add_logo, display_footer, display_threat_level_label, display_recommendation
+
+# Apply custom styling
+load_css()
+
+# Add logo to sidebar
+add_logo()
+
 # Application title and description
 st.title("CO2 Emissions Prediction & Analysis")
 st.markdown("""
@@ -1100,33 +1109,45 @@ elif page == "Threat Assessment":
         # Display threat gauge
         st.subheader(f"Threat Assessment for {selected_region}")
         
-        fig = go.Figure(go.Indicator(
-            mode = "gauge+number",
-            value = threat_level_rounded,
-            domain = {'x': [0, 1], 'y': [0, 1]},
-            title = {'text': f"CO₂ Emissions Threat Level - {threat_category}", 'font': {'color': threat_color}},
-            gauge = {
-                'axis': {'range': [1, 10], 'tickwidth': 1, 'tickcolor': "black"},
-                'bar': {'color': threat_color},
-                'bgcolor': "white",
-                'borderwidth': 2,
-                'bordercolor': "gray",
-                'steps': [
-                    {'range': [1, 3], 'color': 'green'},
-                    {'range': [3, 6], 'color': 'orange'},
-                    {'range': [6, 8], 'color': 'red'},
-                    {'range': [8, 10], 'color': 'darkred'}
-                ],
-                'threshold': {
-                    'line': {'color': "black", 'width': 4},
-                    'thickness': 0.75,
-                    'value': threat_level_rounded
-                }
-            }
-        ))
+        # Use custom styling for threat level display
         
-        fig.update_layout(height=300)
-        st.plotly_chart(fig, use_container_width=True)
+        col1, col2 = st.columns([1, 2])
+        
+        with col1:
+            # Display threat level with custom styling
+            display_threat_level_label(threat_level_rounded, threat_category)
+        
+        with col2:
+            # Use the Plotly gauge instead of SVG due to SVG compatibility issues
+            # The SVG gauge was causing errors in the browser
+            
+            fig = go.Figure(go.Indicator(
+                mode = "gauge+number",
+                value = threat_level_rounded,
+                domain = {'x': [0, 1], 'y': [0, 1]},
+                title = {'text': f"CO₂ Emissions Threat Level - {threat_category}", 'font': {'color': threat_color}},
+                gauge = {
+                    'axis': {'range': [1, 10], 'tickwidth': 1, 'tickcolor': "black"},
+                    'bar': {'color': threat_color},
+                    'bgcolor': "white",
+                    'borderwidth': 2,
+                    'bordercolor': "gray",
+                    'steps': [
+                        {'range': [1, 3], 'color': 'green'},
+                        {'range': [3, 6], 'color': 'orange'},
+                        {'range': [6, 8], 'color': 'red'},
+                        {'range': [8, 10], 'color': 'darkred'}
+                    ],
+                    'threshold': {
+                        'line': {'color': "black", 'width': 4},
+                        'thickness': 0.75,
+                        'value': threat_level_rounded
+                    }
+                }
+            ))
+            
+            fig.update_layout(height=300)
+            st.plotly_chart(fig, use_container_width=True)
         
         # Display threat assessment details
         st.subheader("Threat Assessment Details")
@@ -1179,43 +1200,42 @@ elif page == "Threat Assessment":
         # Mitigation recommendations
         st.subheader("Mitigation Recommendations")
         
-        if threat_level < 3:
-            st.write("""
-            While current emission levels are relatively low, consider these proactive measures:
+        # Get recommendations from the utils module based on threat level
+        recommendations = get_recommendations(threat_level, emission_type='CO₂')
+        
+        # Display recommendations with custom styling
+        for rec in recommendations:
+            display_recommendation(rec)
             
-            1. **Maintain Green Practices**: Continue and expand current sustainable initiatives
-            2. **Set Future Targets**: Establish targets for further emissions reductions
-            3. **Community Awareness**: Increase awareness about sustainable practices
-            4. **Monitor Trends**: Establish robust monitoring systems to track emissions
-            """)
-        elif threat_level < 6:
-            st.write("""
-            Current emission levels require attention. Consider these mitigation measures:
+        # Visual element for telecom towers 
+        st.subheader("Mobile Tower Emissions Visualization")
+        
+        # Use emojis instead of SVG for visualizations due to compatibility issues
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("#### Current Tower Technology")
+            # Instead of SVG, use an emoji and styled HTML for tower visualization
+            st.markdown("""
+            <div style="text-align: center; font-size: 3rem; color: #F97316;">
+                🗼
+            </div>
+            """, unsafe_allow_html=True)
+            st.markdown("**High-emission diesel generators**")
             
-            1. **Renewable Integration**: Increase the share of renewable energy sources
-            2. **Energy Efficiency**: Upgrade to more energy-efficient infrastructure
-            3. **Policy Framework**: Develop and enforce emissions reduction policies
-            4. **Green Technology**: Invest in low-carbon technologies
-            """)
-        elif threat_level < 8:
-            st.write("""
-            High emission levels require significant intervention:
+        with col2:
+            st.markdown("#### Recommended Tower Technology")
+            # Use emoji and styled HTML instead of SVG
+            st.markdown("""
+            <div style="text-align: center; font-size: 3rem; color: #16A34A;">
+                🗼
+            </div>
+            <div style="text-align: center; font-size: 1.5rem; color: #16A34A;">
+                ☀️ 
+            </div>
+            """, unsafe_allow_html=True)
+            st.markdown("**Low-emission renewable power sources**")
             
-            1. **Urgent Transition**: Accelerate transition to renewable energy sources
-            2. **Strict Regulations**: Implement and enforce strict emissions regulations
-            3. **Carbon Pricing**: Consider carbon taxes or emissions trading systems
-            4. **Infrastructure Overhaul**: Prioritize modernization of high-emission infrastructure
-            5. **International Cooperation**: Engage in international emissions reduction initiatives
-            """)
-        else:
-            st.write("""
-            Critical emission levels require immediate and comprehensive action:
-            
-            1. **Emergency Response**: Declare climate emergency and mobilize resources
-            2. **Radical Transformation**: Implement radical transformation of energy systems
-            3. **Highest Prioritization**: Make emissions reduction the highest policy priority
-            4. **International Support**: Seek international support and cooperation
-            5. **Comprehensive Approach**: Address all emission sources simultaneously
-            6. **Public Engagement**: Engage the public in emissions reduction efforts
-            7. **Continuous Monitoring**: Implement continuous monitoring and adaptive management
-            """)
+        # Add footer with custom styling
+        display_footer()
