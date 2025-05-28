@@ -1,11 +1,15 @@
-[server]
-headless = true
-address = "0.0.0.0"
-port = 5000
-
 [theme]
-primaryColor = "#16A34A"
-backgroundColor = "#F8FAFC"
-secondaryBackgroundColor = "#F0FDF4"
-textColor = "#334155"
-font = "sans serif"
+primaryColor="#4CAF50"
+backgroundColor="#FFFFFF"
+secondaryBackgroundColor="#F0F2F6"
+textColor="#262730"
+
+[server]
+port = 8501
+enableCORS = false
+
+[browser]
+serveToAddress = "0.0.0.0"
+
+[runner]
+fastReruns = true
