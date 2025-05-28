@@ -18,6 +18,10 @@ A machine learning-based web application for predicting and analyzing CO2 emissi
 - **Visualization**: Matplotlib, Plotly, Seaborn
 - **Machine Learning**: Scikit-learn, XGBoost
 
+## Live Demo
+
+Visit the live application at: [CO2 Emissions Predictor](https://co2-prediction-majorproject-btechcse-2025sec-n.streamlit.app/)
+
 ## Local Setup
 
 1. Install dependencies:
